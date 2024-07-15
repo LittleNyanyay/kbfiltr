@@ -35,27 +35,6 @@ jobs:
       
       - name: Zip Release Directory
         run: |
-          powershell Compress-Archive -Path exe\x64\${{ matrix.configuration }} -DestinationPath release.zip
-          powershell Compress-Archive -Path sys\x64\${{ matrix.configuration }} -DestinationPath release.zip -Update
+          powershell Compress-Archive -Path exe\x64\${{ matrix.configuration }} -DestinationPath ${{ matrix.configuration }}.zip
+          powershell Compress-Archive -Path sys\x64\${{ matrix.configuration }} -DestinationPath ${{ matrix.configuration }}.zip -Update
       
-      - name: Create Release
-        id: create_release
-        uses: actions/create-release@v1
-        env:
-          GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
-        with:
-          tag_name: ${{ github.sha }}
-          release_name: Release ${{ github.sha }}
-          draft: false
-          prerelease: false
-          token: ${{ secrets.GITHUB_TOKEN }}
-      
-      - name: Upload Release Asset
-        uses: actions/upload-release-asset@v1
-        env:
-          GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
-        with:
-          upload_url: ${{ steps.create_release.outputs.upload_url }}
-          asset_path: release.zip
-          asset_name: release.zip
-          asset_content_type: application/zip

@@ -12,6 +12,8 @@ jobs:
     runs-on: windows-2022
     env:
       Solution_Path: kbfiltr.sln
+    permissions:
+      contents: write
     steps:
       - name: Check out repository code
         uses: actions/checkout@v4
@@ -32,7 +34,7 @@ jobs:
         run: |
           dir exe\x64\${{ matrix.configuration }}
           dir sys\x64\${{ matrix.configuration }}
-      
+
       - name: Create Release
         id: create_release
         uses: softprops/action-gh-release@v1
@@ -43,10 +45,9 @@ jobs:
             Configuration: ${{ matrix.configuration }}
             Platform: ${{ matrix.platform }}
           files: |
-            exe\x64\${{ matrix.configuration }}\kbftest.exe
-            exe\x64\${{ matrix.configuration }}\kbftest.pdb
-            sys\x64\${{ matrix.configuration }}\kbfiltr.sys
-            sys\x64\${{ matrix.configuration }}\kbfiltr.pdb
+            exe/x64/${{ matrix.configuration }}/kbftest.exe
+            exe/x64/${{ matrix.configuration }}/kbftest.pdb
+            sys/x64/${{ matrix.configuration }}/kbfiltr.sys
+            sys/x64/${{ matrix.configuration }}/kbfiltr.pdb
         env:
           GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
-

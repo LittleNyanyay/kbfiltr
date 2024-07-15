@@ -27,7 +27,7 @@ jobs:
           Platform: ${{ matrix.platform }}
           
       - name: List directory contents
-        run: dir ${{ env.Solution_Path }}\x64\${{ matrix.configuration }}
+        run: dir x64\${{ matrix.configuration }}
 
       - name: Zip Release Directory
         run: |

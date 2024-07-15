@@ -27,12 +27,15 @@ jobs:
           Platform: ${{ matrix.platform }}
           
       - name: List directory contents
-        run: dir x64\${{ matrix.configuration }}
-
+        run: |
+          dir exe\x64\${{ matrix.configuration }}
+          dir sys\x64\${{ matrix.configuration }}
+      
       - name: Zip Release Directory
         run: |
-          powershell Compress-Archive -Path x64/${{ matrix.configuration }}/* -DestinationPath x64/${{ matrix.configuration }}.zip
-
+          powershell Compress-Archive -Path exe\x64\${{ matrix.configuration }} -DestinationPath release.zip
+          powershell Compress-Archive -Path sys\x64\${{ matrix.configuration }} -DestinationPath release.zip -Update
+      
       - name: Create Release
         id: create_release
         uses: actions/create-release@v1
@@ -43,13 +46,13 @@ jobs:
           release_name: Release ${{ github.sha }}
           draft: false
           prerelease: false
-
+      
       - name: Upload Release Asset
         uses: actions/upload-release-asset@v1
         env:
           GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
         with:
           upload_url: ${{ steps.create_release.outputs.upload_url }}
-          asset_path: x64/${{ matrix.configuration }}.zip
-          asset_name: kbfiltr_${{ matrix.configuration }}.zip
+          asset_path: release.zip
+          asset_name: release.zip
           asset_content_type: application/zip

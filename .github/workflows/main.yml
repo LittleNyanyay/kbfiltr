@@ -33,8 +33,20 @@ jobs:
           dir exe\x64\${{ matrix.configuration }}
           dir sys\x64\${{ matrix.configuration }}
       
-      - name: Zip Release Directory
-        run: |
-          powershell Compress-Archive -Path exe\x64\${{ matrix.configuration }} -DestinationPath ${{ matrix.configuration }}.zip
-          powershell Compress-Archive -Path sys\x64\${{ matrix.configuration }} -DestinationPath ${{ matrix.configuration }}.zip -Update
-      
+      - name: Create Release
+        id: create_release
+        uses: softprops/action-gh-release@v1
+        with:
+          name: ${{ matrix.configuration }}-${{ github.run_id }}
+          tag_name: ${{ matrix.configuration }}-${{ github.run_id }}
+          body: |
+            Configuration: ${{ matrix.configuration }}
+            Platform: ${{ matrix.platform }}
+          files: |
+            exe\x64\${{ matrix.configuration }}\kbftest.exe
+            exe\x64\${{ matrix.configuration }}\kbftest.pdb
+            sys\x64\${{ matrix.configuration }}\kbfiltr.sys
+            sys\x64\${{ matrix.configuration }}\kbfiltr.pdb
+        env:
+          GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
+
